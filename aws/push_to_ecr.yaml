@@ -1,0 +1,88 @@
+name: Push Docker image to ECR
+description: Build a docker image and push it to an ECR repository. Can optionally sign in to another ECR repository for base images.
+
+on:
+  workflow_call:
+    outputs:
+      publish:
+        description: The result of the publish job.
+        value: ${{ jobs.publish.result }}
+    inputs:
+      image_name:
+        required: false
+        type: string
+        default: ${{ github.repository }}
+      image_tag:
+        required: false
+        type: string
+        default: ${{ github.ref_name }}
+      aws_region:
+        required: false
+        type: string
+        default: us-west-2
+      base_ci_role:
+        required: false
+        type: string
+        default: ''
+      publish_ci_role:
+        required: true
+        type: string
+      directory:
+        required: false
+        type: string
+        default: '.'
+      dockerfile:
+        required: false
+        type: string
+        default: Dockerfile
+      build_args:
+        required: false
+        type: string
+        default: ''
+
+defaults:
+  run:
+    shell: bash
+    working-directory: ${{ inputs.directory }}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Login to all ECR repositories
+      - name: Configure AWS credentials for Base Account
+        if: inputs.base_ci_role != ''
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ inputs.base_ci_role }}
+          aws-region: ${{ inputs.aws_region }}
+      - name: Login to Base ECR repository
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Configure AWS credentials for service account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ inputs.publish_ci_role }}
+          aws-region: ${{ inputs.aws_region }}
+      - name: Login to service's ECR repository
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      # Build and Push Docker Image
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: ${{ inputs.directory }}
+          file: ${{ inputs.directory }}/${{ inputs.dockerfile }}
+          push: true
+          cache-from: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ inputs.image_name }}:${{ inputs.image_tag }}
+          cache-to: type=inline
+          build-args: ${{ inputs.build_args }}
+          tags: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.image_name }}:${{ inputs.image_tag }}
+
