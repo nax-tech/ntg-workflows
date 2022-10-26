@@ -54,6 +54,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         with:
           channel-id: ${{ inputs.channel-ids }}
+          slack-message: Status of CI Run for ${{ inputs.project }}  # message for notification pop-up
           payload: >
             {
               "blocks": [
