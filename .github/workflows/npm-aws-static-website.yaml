@@ -1,4 +1,5 @@
 name: Deploy Website
+# See ../../npm/aws-static-website.md for documentation
 
 permissions:
   id-token: write

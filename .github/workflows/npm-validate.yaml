@@ -1,5 +1,6 @@
 name: Validate Javascript Project
 description: Validate a Javascript Project that uses NPM for dependency and script management.
+# See ../../npm/validate.md for documentation
 
 on:
   workflow_call:

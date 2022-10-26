@@ -1,5 +1,6 @@
 name: Send Slack Notification
 description: Send a notification to specified Slack Channels
+# See ../../slack/notify.md for documentation
 
 on:
   workflow_call:

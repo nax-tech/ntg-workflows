@@ -1,5 +1,6 @@
 name: Push Docker image to ECR
 description: Build a docker image and push it to an ECR repository. Can optionally sign in to another ECR repository for base images.
+# See ../../aws/push-to-ecr.md for documentation
 
 on:
   workflow_call:
