@@ -85,7 +85,7 @@ jobs:
                     },
                     {
                       "type": "plain_text",
-                      "text": "${{ github.ref_name }}",
+                      "text": "${{ github.head_ref || github.ref_name }}",
                       "emoji": false
                     },
                     {
