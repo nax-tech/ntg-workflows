@@ -23,6 +23,8 @@ jobs:
 
 Our notification template can be broken down into 4 distinct parts in the templated notification: the title, CI metadata, an optional custom message, and a button that links to the calling workflow — i.e. the workflow that called this one.
 
+![Notification Sample](slack_sample_notification.png)
+
 ### Title
 
 The title of the notification indicates what actor initiated the workflow. By default, this is the name of the repository, but it can be customized by specifying a value to the `project` input.
