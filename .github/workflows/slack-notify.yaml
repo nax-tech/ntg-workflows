@@ -6,12 +6,15 @@ on:
     inputs:
       project:
         required: false
+        type: string
         default: ${{ github.repository }}
       message:
         required: false
+        type: string
         default: ''
       channel-ids:
         required: true
+        type: string
     secrets:
       SLACK_BOT_TOKEN:
         required: true
