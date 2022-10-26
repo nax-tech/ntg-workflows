@@ -6,6 +6,13 @@ permissions:
 
 on:
   workflow_call:
+    outputs:
+      build:
+        description: The result of the build job.
+        value: ${{ jobs.build.result }}
+      sync:
+        description: The result of the sync job.
+        value: ${{ jobs.sync.result }}
     inputs:
       bucket_name:
         type: string
@@ -37,7 +44,6 @@ on:
         required: false
         type: string
         default: dist
-    secrets: {}
 
 env:
   CACHE_KEY_NODE: cache-node-modules
