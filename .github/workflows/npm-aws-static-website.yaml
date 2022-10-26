@@ -1,0 +1,116 @@
+name: Deploy Website
+# See ../../npm/aws-static-website.md for documentation
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  workflow_call:
+    outputs:
+      build:
+        description: The result of the build job.
+        value: ${{ jobs.build.result }}
+      sync:
+        description: The result of the sync job.
+        value: ${{ jobs.sync.result }}
+    inputs:
+      bucket_name:
+        type: string
+        required: true
+      bucket_region:
+        type: string
+        required: false
+        default: us-west-2
+      cicd_role_arn:
+        type: string
+        required: true
+      node_version:
+        required: false
+        type: string
+        default: 16.14.2
+      install_command:
+        required: false
+        type: string
+        default: npm install
+      build_command:
+        required: false
+        type: string
+        default: npm run build
+      directory:
+        required: false
+        type: string
+        default: '.'
+      dist_path:
+        required: false
+        type: string
+        default: dist
+
+env:
+  CACHE_KEY_NODE: cache-node-modules
+  CACHE_KEY_DIST: cache-dist
+
+defaults:
+  run:
+    shell: bash
+    working-directory: ${{ inputs.directory }}
+
+jobs:
+  build:
+    name: Build Distribution
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Install Node
+        uses: actions/setup-node@v3.4.1
+        with:
+          node-version: ${{ inputs.node_version }}
+      - name: Cache node modules
+        id: cache-npm
+        uses: actions/cache@v3
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: |
+            ~/.npm
+            ${{ inputs.directory }}/node_modules
+          key: ${{ runner.os }}-build-${{ env.CACHE_KEY_NODE }}-${{ hashFiles('${{ inputs.directory }}/**/package-lock.json') }}
+      - name: Build dist
+        env:
+          BUILD_PATH: ${{ inputs.dist_path }}
+        run: |
+          ${{ inputs.install_command }}
+          ${{ inputs.build_command }}
+      - name: Cache dist directory
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ inputs.directory }}/${{ inputs.dist_path }}
+          key: ${{ runner.os }}-build-${{ env.CACHE_KEY_DIST }}-${{ github.run_id }}-${{ github.run_attempt }}
+
+  sync:
+    name: Synchronize to S3 Bucket
+    runs-on: ubuntu-latest
+    needs:
+      - build
+
+    env:
+      DIST_PATH: ${{ inputs.directory }}/${{ inputs.dist_path }}
+      BUCKET_NAME: ${{ inputs.bucket_name }}
+
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ inputs.cicd_role_arn }}
+          aws-region: ${{ inputs.bucket_region }}
+      - name: Retrieve dist directory
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ inputs.directory }}/${{ inputs.dist_path }}
+          key: ${{ runner.os }}-build-${{ env.CACHE_KEY_DIST }}-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Sync to S3 bucket
+        run: |
+          aws s3 sync --delete ${DIST_PATH} s3://${BUCKET_NAME}
