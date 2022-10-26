@@ -42,93 +42,93 @@ jobs:
           TEXT=$(echo "${MESSAGE}" | sed -f "${RUNNER_TEMP}/slack_emojify_commands.txt")
           echo "text='${TEXT}'" >> $GITHUB_OUTPUT
 
-    send:
-      name: Send Slack Notification
-      runs-on: ubuntu-latest
-      needs: [emojify]
+  send:
+    name: Send Slack Notification
+    runs-on: ubuntu-latest
+    needs: [emojify]
 
-      steps:
-        - name: Send notification to Slack
-          uses: slackapi/slack-github-action@v1.23.0
-          env:
-            SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-          with:
-            channel-id: ${{ inputs.channel-ids }}
-            payload: >
-              {
-                "blocks": [
-                  {
-                    "type": "header",
-                    "text": {
-                      "type": "plain_text",
-                      "text": "Status of CI Run for ${{ inputs.project }}"
-                    }
-                  },
-                  {
-                    "type": "divider"
-                  },
-                  {
-                    "type": "section",
-                    "fields": [
-                      {
-                        "type": "mrkdwn",
-                        "text": "*Workflow*"
-                      },
-                      {
-                        "type": "mrkdwn",
-                        "text": "*Branch*"
-                      },
-                      {
-                        "type": "plain_text",
-                        "text": "${{ github.workflow }}",
-                        "emoji": false
-                      },
-                      {
-                        "type": "plain_text",
-                        "text": "${{ github.ref_name }}",
-                        "emoji": false
-                      },
-                      {
-                        "type": "mrkdwn",
-                        "text": "*Run*"
-                      },
-                      {
-                        "type": "mrkdwn",
-                        "text": "*Attempt*"
-                      },
-                      {
-                        "type": "plain_text",
-                        "text": "${{ github.run_id }}",
-                        "emoji": false
-                      },
-                      {
-                        "type": "plain_text",
-                        "text": "${{ github.run_attempt }}",
-                        "emoji": false
-                      }
-                    ]
-                  },
-                  {
-                    "type": "section",
-                    "text": {
-                      "type": "plain_text",
-                      "text": "${{ needs.emojify.outputs.text }}",
-                      "emoji": true
-                    }
-                  },
-                  {
-                    "type": "actions",
-                    "elements": [
-                      {
-                        "type": "button",
-                        "text": {
-                          "type": "plain_text",
-                          "text": "View Workflow",
-                          "emoji": false
-                        },
-                        "url": "${{ github.server_url }}/${{ github.repository }}//actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
-                      }
-                    ]
+    steps:
+      - name: Send notification to Slack
+        uses: slackapi/slack-github-action@v1.23.0
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        with:
+          channel-id: ${{ inputs.channel-ids }}
+          payload: >
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Status of CI Run for ${{ inputs.project }}"
                   }
-                ]
-              }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Workflow*"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Branch*"
+                    },
+                    {
+                      "type": "plain_text",
+                      "text": "${{ github.workflow }}",
+                      "emoji": false
+                    },
+                    {
+                      "type": "plain_text",
+                      "text": "${{ github.ref_name }}",
+                      "emoji": false
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Run*"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Attempt*"
+                    },
+                    {
+                      "type": "plain_text",
+                      "text": "${{ github.run_id }}",
+                      "emoji": false
+                    },
+                    {
+                      "type": "plain_text",
+                      "text": "${{ github.run_attempt }}",
+                      "emoji": false
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "${{ needs.emojify.outputs.text }}",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Workflow",
+                        "emoji": false
+                      },
+                      "url": "${{ github.server_url }}/${{ github.repository }}//actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
+                    }
+                  ]
+                }
+              ]
+            }
