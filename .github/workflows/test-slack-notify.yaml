@@ -11,7 +11,7 @@ jobs:
     uses: ./.github/workflows/slack-notify.yaml
     if: success() || failure()
     with:
-      channel-ids: C03K7LN44EM
+      channel-ids: U03JNQH43H8
     secrets:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
@@ -19,7 +19,7 @@ jobs:
     uses: ./.github/workflows/slack-notify.yaml
     if: success() || failure()
     with:
-      channel-ids: C03K7LN44EM
+      channel-ids: U03JNQH43H8
       project: one-line-message
       message: Bohemian Rhapsody by Queen
     secrets:
@@ -29,7 +29,7 @@ jobs:
     uses: ./.github/workflows/slack-notify.yaml
     if: success() || failure()
     with:
-      channel-ids: C03K7LN44EM
+      channel-ids: U03JNQH43H8
       project: multi-line-message
       message: |
         I'm just a poor boy from a poor family
@@ -41,7 +41,7 @@ jobs:
     uses: ./.github/workflows/slack-notify.yaml
     if: success() || failure()
     with:
-      channel-ids: C03K7LN44EM
+      channel-ids: U03JNQH43H8
       project: emojis
       message: |
         success Success
