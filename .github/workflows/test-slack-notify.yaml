@@ -1,0 +1,50 @@
+name: Test Send Slack Notification
+
+on: [pull_request]
+
+jobs:
+  minimal:
+    uses: ./.github/workflows/slack-notify.yaml
+    if: success() || failure()
+    with:
+      channel-ids: C03K7LN44EM
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+  one-line-message:
+    uses: ./.github/workflows/slack-notify.yaml
+    if: success() || failure()
+    with:
+      channel-ids: C03K7LN44EM
+      message: Queen
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+  multi-line-message:
+    uses: ./.github/workflows/slack-notify.yaml
+    if: success() || failure()
+    with:
+      channel-ids: C03K7LN44EM
+      message: |
+        I'm just a poor boy from a poor family
+        He's just a poor boy from a poor family.
+      secrets:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+  custom-title:
+    uses: ./.github/workflows/slack-notify.yaml
+    if: success() || failure()
+    with:
+      channel-ids: C03K7LN44EM
+      project: Bohemian Rhapsody
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+  emojis:
+    uses: ./.github/workflows/slack-notify.yaml
+    if: success() || failure()
+    with:
+      channel-ids: C03K7LN44EM
+      project: Bohemian Rhapsody
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
