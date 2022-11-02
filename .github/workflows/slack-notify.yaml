@@ -40,7 +40,9 @@ jobs:
           s/skipped/:question:/g
           CMD
           TEXT=$(echo "${MESSAGE}" | sed -f "${RUNNER_TEMP}/slack_emojify_commands.txt")
-          echo "text='${TEXT}'" >> $GITHUB_OUTPUT
+          echo "text<<MSG" >> $GITHUB_OUTPUT
+          echo "$TEXT" >> $GITHUB_OUTPUT
+          echo "MSG" >> $GITHUB_OUTPUT
 
   send:
     name: Send Slack Notification
