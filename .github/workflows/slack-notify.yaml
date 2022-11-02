@@ -11,7 +11,7 @@ on:
       message:
         required: false
         type: string
-        default: ''
+        default: success
       channel-ids:
         required: true
         type: string
@@ -40,7 +40,9 @@ jobs:
           s/skipped/:question:/g
           CMD
           TEXT=$(echo "${MESSAGE}" | sed -f "${RUNNER_TEMP}/slack_emojify_commands.txt")
-          echo "text='${TEXT}'" >> $GITHUB_OUTPUT
+          echo "text<<MSG" >> $GITHUB_OUTPUT
+          echo "$TEXT" >> $GITHUB_OUTPUT
+          echo "MSG" >> $GITHUB_OUTPUT
 
   send:
     name: Send Slack Notification
@@ -113,7 +115,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "plain_text",
-                    "text": "${{ needs.emojify.outputs.text }}",
+                    "text": ${{ toJSON(needs.emojify.outputs.text) }},
                     "emoji": true
                   }
                 },
