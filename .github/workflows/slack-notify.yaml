@@ -11,7 +11,7 @@ on:
       message:
         required: false
         type: string
-        default: ''
+        default: success
       channel-ids:
         required: true
         type: string
@@ -115,7 +115,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "plain_text",
-                    "text": "${{ needs.emojify.outputs.text }}",
+                    "text": ${{ toJSON(needs.emojify.outputs.text) }},
                     "emoji": true
                   }
                 },
