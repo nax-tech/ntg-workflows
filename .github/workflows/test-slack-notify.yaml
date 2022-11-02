@@ -50,5 +50,10 @@ jobs:
     with:
       channel-ids: C03K7LN44EM
       project: Bohemian Rhapsody
+      message: |
+        success Success
+        failure Failure
+        cancelled Cancelled
+        skipped Skipped
     secrets:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
