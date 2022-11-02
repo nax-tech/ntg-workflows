@@ -1,6 +1,10 @@
 name: Test Send Slack Notification
 
-on: [pull_request]
+on:
+  pull_request:
+    paths:
+      - .github/workflows/slack-notify.yaml
+      - .github/workflows/test-slack-notify.yaml
 
 jobs:
   minimal:
@@ -28,8 +32,8 @@ jobs:
       message: |
         I'm just a poor boy from a poor family
         He's just a poor boy from a poor family.
-      secrets:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
   custom-title:
     uses: ./.github/workflows/slack-notify.yaml
