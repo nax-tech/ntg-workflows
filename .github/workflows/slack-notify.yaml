@@ -114,9 +114,8 @@ jobs:
                 {
                   "type": "section",
                   "text": {
-                    "type": "plain_text",
-                    "text": ${{ toJSON(needs.emojify.outputs.text) }},
-                    "emoji": true
+                    "type": "mrkdwn",
+                    "text": ${{ toJSON(needs.emojify.outputs.text) }}
                   }
                 },
                 {

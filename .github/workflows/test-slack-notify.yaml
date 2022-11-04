@@ -50,3 +50,25 @@ jobs:
         skipped Skipped
     secrets:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+  formatting:
+    uses: ./.github/workflows/slack-notify.yaml
+    if: success() || failure()
+    with:
+      channel-ids: U03JNQH43H8
+      project: formatting
+      message: |
+        *bold*
+        _italics_
+        ~strikethrough~
+        https://google.com
+        1. I
+        2. will
+        - bullet
+        - pellet
+        > This is what some famous guy said.
+        ```
+        import blockquote
+        ```
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
