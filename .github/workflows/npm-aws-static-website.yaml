@@ -1,10 +1,6 @@
 name: Deploy Website
 # See ../../npm/aws-static-website.md for documentation
 
-permissions:
-  id-token: write
-  contents: read
-
 on:
   workflow_call:
     outputs:
@@ -45,6 +41,13 @@ on:
         required: false
         type: string
         default: dist
+    secrets:
+      GITHUB_OAUTH_TOKEN:
+        required: false
+
+permissions:
+  id-token: write
+  contents: read
 
 env:
   CACHE_KEY_NODE: cache-node-modules
@@ -70,10 +73,11 @@ jobs:
           path: |
             ~/.npm
             ${{ inputs.directory }}/node_modules
-          key: ${{ runner.os }}-build-${{ env.CACHE_KEY_NODE }}-${{ hashFiles('${{ inputs.directory }}/**/package-lock.json') }}
+          key: ${{ runner.os }}-build-${{ env.CACHE_KEY_NODE }}-${{ hashFiles('**/package-lock.json') }}
       - name: Build dist
         env:
           BUILD_PATH: ${{ inputs.dist_path }}
+          GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_OAUTH_TOKEN }}
         run: |
           ${{ inputs.install_command }}
           ${{ inputs.build_command }}
