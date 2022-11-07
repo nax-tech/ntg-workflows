@@ -4,15 +4,9 @@ name: Validate Javascript Project
 on:
   workflow_call:
     outputs:
-      install:
-        description: The result of the install job.
-        value: ${{ jobs.install.result }}
-      lint:
-        description: The result of the lint job.
-        value: ${{ jobs.lint.result }}
-      test:
-        description: The result of the test job.
-        value: ${{ jobs.test.result }}
+      jobs:
+        description: The jobs context as a JSON string.
+        value: ${{ toJSON(jobs) }}
     inputs:
       directory:
         required: false

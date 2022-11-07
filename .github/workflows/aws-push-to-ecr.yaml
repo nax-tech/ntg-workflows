@@ -4,9 +4,9 @@ name: Push Docker image to ECR
 on:
   workflow_call:
     outputs:
-      publish:
-        description: The result of the publish job.
-        value: ${{ jobs.publish.result }}
+      jobs:
+        description: The jobs context as a JSON string.
+        value: ${{ toJSON(jobs) }}
     inputs:
       image_name:
         required: false

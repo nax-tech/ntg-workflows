@@ -4,12 +4,9 @@ name: Deploy Website
 on:
   workflow_call:
     outputs:
-      build:
-        description: The result of the build job.
-        value: ${{ jobs.build.result }}
-      sync:
-        description: The result of the sync job.
-        value: ${{ jobs.sync.result }}
+      jobs:
+        description: The jobs context as a JSON string.
+        value: ${{ toJSON(jobs) }}
     inputs:
       bucket_name:
         type: string
