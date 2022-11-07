@@ -47,11 +47,13 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:
+      AWS_REGION: us-west-2
+      AWS_DEFAULT_REGION: us-west-2
 
     steps:
       # Login to all ECR repositories
       - name: Configure AWS credentials for Base Account
-        if: inputs.base_ci_role != ''
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: ${{ inputs.base_ci_role }}
@@ -60,6 +62,12 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
       - name: Configure AWS credentials for service account
         uses: aws-actions/configure-aws-credentials@v1
+        env:
+          AWS_ACCESS_KEY_ID:
+          AWS_SECRET_ACCESS_KEY:
+          AWS_SESSION_TOKEN:
+          AWS_DEFAULT_REGION:
+          AWS_REGION:
         with:
           role-to-assume: ${{ inputs.publish_ci_role }}
           aws-region: ${{ inputs.aws_region }}
