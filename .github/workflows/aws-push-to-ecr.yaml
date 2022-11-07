@@ -40,11 +40,6 @@ on:
         type: string
         default: ''
 
-defaults:
-  run:
-    shell: bash
-    working-directory: ${{ inputs.directory }}
-
 jobs:
   publish:
     runs-on: ubuntu-latest
