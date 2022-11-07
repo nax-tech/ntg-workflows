@@ -47,30 +47,35 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    env:
-      AWS_REGION: us-west-2
-      AWS_DEFAULT_REGION: us-west-2
 
     steps:
+      - id: tokenid
+        run: |
+          IDTOKEN=$(curl -H "Authorization: bearer ${ACTIONS_RUNTIME_TOKEN}" ${ACTIONS_ID_TOKEN_REQUEST_URL}  -H "Accept: application/json; api-version=2.0" -H "Content-Type: application/json" -d "{}" | jq)
+          # echo $IDTOKEN
+          # jwtd() {
+          #     if [[ -x $(command -v jq) ]]; then
+          #         jq -R 'split(".") | .[0],.[1] | @base64d | fromjson' <<< "${1}"
+          #         echo "Signature: $(echo "${1}" | awk -F'.' '{print $3}')"
+          #     fi
+          # }
+          # jwtd $IDTOKEN
+          echo "${IDTOKEN}" >> $RUNNER_TEMP/gha_oid_token
       # Login to all ECR repositories
       - name: Configure AWS credentials for Base Account
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: ${{ inputs.base_ci_role }}
           aws-region: ${{ inputs.aws_region }}
+          web-identity-token-file: ${{ env.RUNNER_TEMP }}/gha_oid_token
       - name: Login to Base ECR repository
         uses: aws-actions/amazon-ecr-login@v1
       - name: Configure AWS credentials for service account
         uses: aws-actions/configure-aws-credentials@v1
-        env:
-          AWS_ACCESS_KEY_ID:
-          AWS_SECRET_ACCESS_KEY:
-          AWS_SESSION_TOKEN:
-          AWS_DEFAULT_REGION:
-          AWS_REGION:
         with:
           role-to-assume: ${{ inputs.publish_ci_role }}
           aws-region: ${{ inputs.aws_region }}
+          web-identity-token-file: ${{ env.RUNNER_TEMP }}/gha_oid_token
       - name: Login to service's ECR repository
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
