@@ -1,6 +1,10 @@
 name: Push Docker image to ECR
 # See ../../aws/push-to-ecr.md for documentation
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   workflow_call:
     outputs:
@@ -39,11 +43,6 @@ on:
         required: false
         type: string
         default: ''
-
-defaults:
-  run:
-    shell: bash
-    working-directory: ${{ inputs.directory }}
 
 jobs:
   publish:
@@ -85,4 +84,3 @@ jobs:
           cache-to: type=inline
           build-args: ${{ inputs.build_args }}
           tags: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.image_name }}:${{ inputs.image_tag }}
-
