@@ -1,6 +1,10 @@
 name: Push Docker image to ECR
 # See ../../aws/push-to-ecr.md for documentation
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   workflow_call:
     outputs:
@@ -40,10 +44,6 @@ on:
         type: string
         default: ''
 
-permissions:
-  id-token: write
-  contents: read
-
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -63,12 +63,14 @@ jobs:
           echo "${IDTOKEN}" >> $RUNNER_TEMP/gha_oid_token
       # Login to all ECR repositories
       - name: Configure AWS credentials for Base Account
+        if: inputs.base_ci_role != ''
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: ${{ inputs.base_ci_role }}
           aws-region: ${{ inputs.aws_region }}
           web-identity-token-file: ${{ env.RUNNER_TEMP }}/gha_oid_token
       - name: Login to Base ECR repository
+        if: inputs.base_ci_role != ''
         uses: aws-actions/amazon-ecr-login@v1
       - name: Configure AWS credentials for service account
         uses: aws-actions/configure-aws-credentials@v1
@@ -97,4 +99,3 @@ jobs:
           cache-to: type=inline
           build-args: ${{ inputs.build_args }}
           tags: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.image_name }}:${{ inputs.image_tag }}
-

@@ -1,6 +1,10 @@
 name: Deploy Website
 # See ../../npm/aws-static-website.md for documentation
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   workflow_call:
     outputs:
@@ -41,10 +45,6 @@ on:
     secrets:
       GITHUB_OAUTH_TOKEN:
         required: false
-
-permissions:
-  id-token: write
-  contents: read
 
 env:
   CACHE_KEY_NODE: cache-node-modules
@@ -109,6 +109,6 @@ jobs:
             ${{ inputs.directory }}/${{ inputs.dist_path }}
           key: ${{ runner.os }}-build-${{ env.CACHE_KEY_DIST }}-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Sync to S3 bucket
+        working-directory: ${{ inputs.directory }}
         run: |
           aws s3 sync --delete ${DIST_PATH} s3://${BUCKET_NAME}
-        working-directory: ${{ inputs.directory }}
